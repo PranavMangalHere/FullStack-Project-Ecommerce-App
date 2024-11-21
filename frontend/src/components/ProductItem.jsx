@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+import  { useContext } from 'react'
 import { ShopContext } from '../context/Shopcontext'
 import { Link } from 'react-router-dom';
 

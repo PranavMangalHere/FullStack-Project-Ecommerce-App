@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/Shopcontext'
 import Title from './Title';
 import ProductItem from './ProductItem';
@@ -9,6 +9,7 @@ const BestSeller = () => {
     const [bestSeller, setBestSeller] = useState([]);
 
     useEffect(()=>{
+        // eslint-disable-next-line no-unused-vars
         const bestProduct = products.filter((item)=>(item.bestSeller));
         setBestSeller(products.slice(0,5))
     }, [])
