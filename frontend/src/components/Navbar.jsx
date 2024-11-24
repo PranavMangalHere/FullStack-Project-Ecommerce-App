@@ -19,10 +19,10 @@ const Navbar = () => {
      const data = await response.json();
 
      if (response.ok) {
-       setIsAuthenticated(true); // Update authentication status
-       localStorage.setItem("token", data.token); // Store token
+       setIsAuthenticated(true); 
+       localStorage.setItem("token", data.token); 
      } else {
-       console.error(data.message); // Handle error
+       console.error(data.message); 
      }
    } catch (error) {
      console.error("Error during sign-in:", error);
@@ -30,8 +30,8 @@ const Navbar = () => {
  };
 
   const handleLogout = () => {
-    setIsAuthenticated(false); // Update authentication status
-    localStorage.removeItem("token"); // Clear token
+    setIsAuthenticated(false); 
+    localStorage.removeItem("token"); 
   };
 
   return (
