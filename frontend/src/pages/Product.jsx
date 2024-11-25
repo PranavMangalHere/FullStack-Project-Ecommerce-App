@@ -7,7 +7,7 @@ const Product = () => {
 
   // product ki id laa rahe hai 
   const {productId} = useParams();
-  const {products} = useContext(ShopContext);
+  const {products, currency, addToCart, } = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState('')
   const [size,setSize] = useState('')
@@ -17,7 +17,7 @@ const Product = () => {
     products.map((item)=>{
       if(item._id === productId){
         setProductData(item)
-        console.log(item);
+        // console.log(item);
         setImage(item.image[0])
         return null;
       }
@@ -29,6 +29,7 @@ const Product = () => {
   },[productId])
 
   return productData ? (
+    <div>
     <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity -100'>
 
       {/* Product data */}
@@ -71,13 +72,34 @@ const Product = () => {
                 ))
               }
             </div>
-            <button>ADD TO CART</button>
+            <button onClick={()=>addToCart(productData._id,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
+            <hr className='mt-8 sm:w-4/5' />
+            <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
+              <p>100% Original Product</p>
+              <p>Cash on delivery is available on this product</p>
+              <p>Easy return and exchange policy in 7 days</p>
+            </div>
           </div>
         </div>
 
+        
       </div>
+      { /* Description and review section */}
+        <div className='mt-20 '>
+          <div className='flex'>
+            <b className='border px-5 py-3 text-sm'>Description</b>
+            <p className='border px-5 py-3 text-sm'>Reviews {122}</p>
+          </div>
+          <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam quaerat incidunt iste aut nam expedita a, consequatur consequuntur provident molestiae.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem delectus possimus earum rerum aliquid itaque ratione sit necessitatibus, molestias </p>
 
+          </div>
+        </div>
+        {/* Display related products */}
     </div>
+
+  </div>
   ): <div className='opacity-0'></div>
 }
 
