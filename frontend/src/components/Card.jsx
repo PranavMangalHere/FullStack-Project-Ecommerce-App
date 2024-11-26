@@ -49,12 +49,12 @@ const Card = () => {
           </div>
 
           <span className="logo-bottom-text absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-7 text-[#bd9f67] px-2 text-[11px] opacity-0 group-hover:opacity-100 group-hover:tracking-wider group-hover:mt-0 duration-500 ease-in-out">
-            uiverse.io
+              ZOOSKO  
           </span>
         </div>
 
         <span className="bottom-text absolute left-1/2 bottom-3 transform -translate-x-1/2 text-[6px] text-[#bd9f67] bg-[#243137] opacity-0 uppercase px-1 py-0.5 tracking-[7px] group-hover:opacity-100 group-hover:tracking-[3px] duration-500 ease-in-out">
-          universe of ui
+
         </span>
       </div>
     </div>

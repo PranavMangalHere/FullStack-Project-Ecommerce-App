@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
-import Collection from "./pages/collection";
+import Home from "../src/pages/Home";
+// import Collection from "./Collection";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Product from "./pages/Product";
@@ -12,7 +12,10 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import LatestCollection from "./components/LatestCollection";
 import SigninSignUp from "./components/SigninSIgnUp";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -20,7 +23,7 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -39,11 +42,12 @@ const App = () => {
       )}
       {!loading && (
         <>
+          <ToastContainer />
           <Navbar />
           <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/collection" element={<Collection />} />
+              <Route path="/collection" element={<LatestCollection />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/product/:productId" element={<Product />} />
@@ -51,7 +55,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/place-order" element={<PlaceOrder />} />
               <Route path="/orders" element={<Orders />} />
-              <Route path="/signin-signup" element={<SigninSignUp />} />
+              <Route path="/SigninSIgnUp" element={<SigninSignUp />} />
             </Routes>
           </div>
           <Footer />

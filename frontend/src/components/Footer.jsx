@@ -1,15 +1,16 @@
-import { useState } from "react";
+import  { useState } from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
 
     try {
-      const response = await fetch("/subscribe", {
+      const response = await fetch("http://localhost:5000/api/subscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,59 +19,97 @@ const Footer = () => {
       });
 
       if (response.ok) {
-        alert("Subscription successful");
-        e.target.email.value = "";
+        setSubscriptionStatus("success");
+        setEmail("");
+
+        // Clear status after 3 seconds
+        setTimeout(() => {
+          setSubscriptionStatus(null);
+        }, 3000);
       } else {
-        alert("Subscription failed");
+        setSubscriptionStatus("error");
+
+        // Clear status after 3 seconds
+        setTimeout(() => {
+          setSubscriptionStatus(null);
+        }, 3000);
       }
     } catch (error) {
       console.error(error);
-      alert("Subscription failed");
+      setSubscriptionStatus("error");
+
+      // Clear status after 3 seconds
+      setTimeout(() => {
+        setSubscriptionStatus(null);
+      }, 3000);
     }
   };
 
   return (
-    <footer className="bg-zinc-100 text-black py-5">
-      <div className="container mx-auto grid grid-cols-2 gap-10 text-left">
-        {/* Left Section */}
-        <div className="flex flex-col justify-center">
-          <p className="text-sm">© 2023 ZOOSKO. All rights reserved.</p>
+    <footer className="bg-gradient-to-r from-zinc-100 to-zinc-200 text-black py-8 shadow-lg">
+      <div className="container mx-auto grid md:grid-cols-2 gap-8 px-4">
+        <div className="flex flex-col justify-center text-center md:text-left">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">ZOOSKO</h1>
+          <p className="text-sm text-gray-600">
+            © 2024 ZOOSKO. All rights reserved.
+          </p>
         </div>
 
-        {/* Right Section (Subscribe Form and Social Links) */}
         <div className="flex flex-col items-center justify-center">
-          <h2 className="text-lg font-bold mb-4">
-            Subscribe to Our Newsletter
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">
+            Stay Updated
           </h2>
-          <form onSubmit={handleSubscribe} className="flex justify-center mb-4">
-            <input
-              type="email"
-              className="p-2 rounded-l-md bg-gray-800 text-gray-300 placeholder-gray-100 drop-shadow-xl"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded-xl"
-            >
-              Subscribe
-            </button>
+
+          <form onSubmit={handleSubscribe} className="w-full max-w-md">
+            <div className="flex">
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                placeholder="Enter your email"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-r-lg transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Subscribe
+              </button>
+            </div>
+
+            {subscriptionStatus === "success" && (
+              <div className="mt-2 flex items-center text-green-600">
+                <CheckCircle className="mr-2" size={20} />
+                Subscription successful!
+              </div>
+            )}
+
+            {subscriptionStatus === "error" && (
+              <div className="mt-2 flex items-center text-red-600">
+                <AlertCircle className="mr-2" size={20} />
+                Subscription failed. Please try again.
+              </div>
+            )}
           </form>
-          <div className="flex justify-center space-x-10 mt-4">
-            <a href="#" className="text-blue-500 hover:text-blue-400">
-              <FaFacebook size={24} />
-            </a>
-            <a href="#" className="text-blue-500 hover:text-blue-400">
-              <FaTwitter size={24} />
-            </a>
-            <a href="#" className="text-blue-500 hover:text-blue-400">
-              <FaInstagram size={24} />
-            </a>
-            <a href="#" className="text-blue-500 hover:text-blue-400">
-              <FaLinkedin size={24} />
-            </a>
+
+          
+          <div className="flex space-x-6 mt-8">
+            {[
+              { Icon: FaFacebook, color: "text-blue-700" },
+              { Icon: FaTwitter, color: "text-blue-400" },
+              { Icon: FaInstagram, color: "text-pink-500" },
+              { Icon: FaLinkedin, color: "text-blue-800" },
+            ].map(({ Icon, color }, index) => (
+              <a
+                key={index}
+                href="#"
+                className={`${color} hover:opacity-75 transition duration-300`}
+              >
+                <Icon size={28} />
+              </a>
+            ))}
           </div>
         </div>
       </div>

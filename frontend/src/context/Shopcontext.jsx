@@ -1,24 +1,101 @@
 /* eslint-disable react/prop-types */
-import { createContext } from "react";
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
+import { createContext, useEffect, useState } from "react";
 import { products } from "../constants/assets";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const ShopContext = createContext();
 
-const ShopContextProvider = (props) =>{
+const ShopContextProvider = (props) => {
+  const currency = "$";
+  const delivery_fee = 10;
+  const [cartItems, setCartItems] = useState({});
+  const navigate = useNavigate();
 
-    const currency = "₹";
-    const delivery_fee = 10;
+  const deepClone = (obj) => JSON.parse(JSON.stringify(obj)); // Deep clone utility
 
-    const value = {
-        products, currency, delivery_fee
+  const addToCart = async (itemId, size) => {
+    if (!size) {
+      toast.error("Select the product size");
+      return;
     }
 
-    return(
-        <ShopContext.Provider value={value}>
-            {props.children}
-        </ShopContext.Provider>
+    let cartData = deepClone(cartItems); // Use deepClone here
+    if (cartData[itemId]) {
+      if (cartData[itemId][size]) {
+        cartData[itemId][size] += 1;
+      } else {
+        cartData[itemId][size] = 1;
+      }
+    } else {
+      cartData[itemId] = {};
+      cartData[itemId][size] = 1;
+    }
+    setCartItems(cartData);
+  };
 
-    )
-}
+  const getCartCount = () => {
+    let totalCount = 0;
+    for (const items in cartItems) {
+      for (const item in cartItems[items]) {
+        try {
+          if (cartItems[items][item] > 0) {
+            totalCount += cartItems[items][item];
+          }
+        } catch (err) {}
+      }
+    }
+    return totalCount;
+  };
+
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = deepClone(cartItems); // Use deepClone here
+
+    if (cartData[itemId] && cartData[itemId][size] !== undefined) {
+      cartData[itemId][size] = quantity;
+      setCartItems(cartData);
+    }
+  };
+
+  const getCartAmount = () => {
+    let totalAmount = 0;
+
+    for (const items in cartItems) {
+      const itemInfo = products.find(
+        (product) => String(product._id) === String(items)
+      ); // Ensure type match
+      if (itemInfo) {
+        for (const item in cartItems[items]) {
+          try {
+            if (cartItems[items][item] > 0) {
+              totalAmount += itemInfo.price * cartItems[items][item];
+            }
+          } catch (error) {}
+        }
+      }
+    }
+
+    return totalAmount;
+  };
+
+  const value = {
+    products,
+    currency,
+    delivery_fee,
+    cartItems,
+    addToCart,
+    getCartCount,
+    updateQuantity,
+    getCartAmount,
+    navigate,
+  };
+
+  return (
+    <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>
+  );
+};
 
 export default ShopContextProvider;
+

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { assets } from "../constants/assets";
 import { Link, NavLink } from "react-router-dom";
@@ -5,33 +6,34 @@ import { Link, NavLink } from "react-router-dom";
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication status
+  const [searchVisible, setSearchVisible] = useState(false); // State for controlling search bar visibility
 
- const handleSignIn = async (email, password) => {
-   try {
-     const response = await fetch("http://localhost:8080/login", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify({ email, password }),
-     });
+  const handleSignIn = async (email, password) => {
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-     const data = await response.json();
+      const data = await response.json();
 
-     if (response.ok) {
-       setIsAuthenticated(true); 
-       localStorage.setItem("token", data.token); 
-     } else {
-       console.error(data.message); 
-     }
-   } catch (error) {
-     console.error("Error during sign-in:", error);
-   }
- };
+      if (response.ok) {
+        setIsAuthenticated(true);
+        localStorage.setItem("token", data.token);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+    }
+  };
 
   const handleLogout = () => {
-    setIsAuthenticated(false); 
-    localStorage.removeItem("token"); 
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
   };
 
   return (
@@ -79,7 +81,18 @@ const Navbar = () => {
           src={assets.search_icon}
           className="w-5 cursor-pointer transition duration-200 ease-in-out hover:scale-110"
           alt="Search"
+          onClick={() => setSearchVisible(!searchVisible)} // Toggle search bar visibility
         />
+
+        {searchVisible && (
+          <div className="absolute top-12 right-0 left-0 bg-white shadow-md p-4">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full px-4 py-2 border rounded-md"
+            />
+          </div>
+        )}
 
         <div className="group relative">
           <img
@@ -105,12 +118,12 @@ const Navbar = () => {
                   </p>
                 </>
               ) : (
-                <p
+                <Link
+                  to="/SigninSIgnUp" // Direct to the SignIn/SignUp page
                   className="cursor-pointer hover:text-blue-500 transition duration-400"
-                  onClick={() => handleSignIn()}
                 >
-                  <NavLink to="/SigninSIgnUp">Sign In</NavLink>
-                </p>
+                  Sign In
+                </Link>
               )}
             </div>
           </div>
@@ -132,8 +145,6 @@ const Navbar = () => {
           alt="Menu"
         />
       </div>
-
-      {/* Sidebar menu for small screens */}
       <div
         className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${
           visible ? "w-full" : "w-0"
@@ -190,20 +201,13 @@ const Navbar = () => {
               LOGOUT
             </p>
           ) : (
-            <p
-              onClick={() => {
-                handleSignIn();
-                setVisible(false);
-              }}
+            <Link
+              onClick={() => setVisible(false)}
+              to="/SigninSIgnUp"
               className="py-2 pl-6 border-b border-gray-200 hover:bg-gray-100 cursor-pointer"
             >
-              <NavLink
-                to="/SigninSIgnUp"
-                className="cursor-pointer hover:text-blue-500 transition duration-400"
-              >
-                Sign In
-              </NavLink>
-            </p>
+              Sign In
+            </Link>
           )}
         </div>
       </div>
