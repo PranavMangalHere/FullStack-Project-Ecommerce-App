@@ -1,66 +1,117 @@
-// import React from 'react'
-// import {assets } from '../assets/assets'
-// const Footer = () => {
-//   return (
-//     <div>
-//       <div className='flex flex-col sm:grid grid-cols-[3fr_1fr_fr] gap-14 my-10 mt-40 text-sm'>
-
-//         <div>
-//           <img src={assets.logo} className='mb-5 w-12' alt=""  />
-//           <p className='w-full md:w-1/2 text-gray-600'>
-//             Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto et debitis similique voluptates distinctio facere ducimus. Dolorum itaque ea quae quod quaerat similique, fuga iste magnam consequatur cupiditate? Alias, dolor.
-//           </p>
-//         </div>
-
-//         <div>
-//           <p className='text-xl font-medium mb-5'>COMPANY</p>
-//           <ul className='flex flex-col gap-1 text-gray-600'></ul>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Footer;
-import React from "react";
+import  { useState } from "react";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setSubscriptionStatus("success");
+        setEmail("");
+
+        // Clear status after 3 seconds
+        setTimeout(() => {
+          setSubscriptionStatus(null);
+        }, 3000);
+      } else {
+        setSubscriptionStatus("error");
+
+        // Clear status after 3 seconds
+        setTimeout(() => {
+          setSubscriptionStatus(null);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+      setSubscriptionStatus("error");
+
+      // Clear status after 3 seconds
+      setTimeout(() => {
+        setSubscriptionStatus(null);
+      }, 3000);
+    }
+  };
+
   return (
-    <footer className="bg-gray-100 py-8">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-start space-y-8 md:space-y-0">
-        {/* Left Section */}
-        <div className="md:w-1/3">
-          <h2 className="text-2xl font-bold">FOREVER<span className="text-pink-500">.</span></h2>
-          <p className="text-gray-600 mt-4">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-            scrambled it to make a type specimen book.
+    <footer className="bg-gradient-to-r from-zinc-100 to-zinc-200 text-black py-8 shadow-lg">
+      <div className="container mx-auto grid md:grid-cols-2 gap-8 px-4">
+        <div className="flex flex-col justify-center text-center md:text-left">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">ZOOSKO</h1>
+          <p className="text-sm text-gray-600">
+            © 2024 ZOOSKO. All rights reserved.
           </p>
         </div>
 
-        {/* Middle Section */}
-        <div className="md:w-1/3">
-          <h3 className="text-xl font-semibold mb-4">COMPANY</h3>
-          <ul className="space-y-2 text-gray-600">
-            <li><a href="#" className="hover:text-gray-800">Home</a></li>
-            <li><a href="#" className="hover:text-gray-800">About us</a></li>
-            <li><a href="#" className="hover:text-gray-800">Delivery</a></li>
-            <li><a href="#" className="hover:text-gray-800">Privacy policy</a></li>
-          </ul>
-        </div>
+        <div className="flex flex-col items-center justify-center">
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">
+            Stay Updated
+          </h2>
 
-        {/* Right Section */}
-        <div className="md:w-1/3">
-          <h3 className="text-xl font-semibold mb-4">GET IN TOUCH</h3>
-          <p className="text-gray-600">+1-212-456-7890</p>
-          <p className="text-gray-600">contact@foreveryou.com</p>
-        </div>
-      </div>
+          <form onSubmit={handleSubscribe} className="w-full max-w-md">
+            <div className="flex">
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                placeholder="Enter your email"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-r-lg transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Subscribe
+              </button>
+            </div>
 
-      <div className="mt-8 border-t border-gray-300 pt-4 text-center">
-        <p className="text-gray-600">
-          Copyright 2024© forever.com - All Rights Reserved.
-        </p>
+            {subscriptionStatus === "success" && (
+              <div className="mt-2 flex items-center text-green-600">
+                <CheckCircle className="mr-2" size={20} />
+                Subscription successful!
+              </div>
+            )}
+
+            {subscriptionStatus === "error" && (
+              <div className="mt-2 flex items-center text-red-600">
+                <AlertCircle className="mr-2" size={20} />
+                Subscription failed. Please try again.
+              </div>
+            )}
+          </form>
+
+          
+          <div className="flex space-x-6 mt-8">
+            {[
+              { Icon: FaFacebook, color: "text-blue-700" },
+              { Icon: FaTwitter, color: "text-blue-400" },
+              { Icon: FaInstagram, color: "text-pink-500" },
+              { Icon: FaLinkedin, color: "text-blue-800" },
+            ].map(({ Icon, color }, index) => (
+              <a
+                key={index}
+                href="#"
+                className={`${color} hover:opacity-75 transition duration-300`}
+              >
+                <Icon size={28} />
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   );
