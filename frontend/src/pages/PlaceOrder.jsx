@@ -1,71 +1,5 @@
-// import React ,{useState}from 'react'
-// import Title from '../components/Title'
-// import CartTotal from '../components/CartTotal'
-// import { assets } from '../assets/assets'
-
-// const PlaceOrder = () => {
-
-//   const [method,setMethod] = useState('cod');
-
-//   return (
-//     <div className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
-//       <div className='flex flex-col gap-4 w-full sm:max-w-[480px]'>
-
-//         <div className='text-xl sm:text-2xl my-3'>
-//           <Title text1={'DILLIVERY'} text2={'INFORMATION'}/>
-//         </div>
-//         <div className='flex gap-3'>
-//           <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='First name' type="text" />
-//           <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Last name' type="text" />
-//         </div>
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='email address' type="email" />
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Street' type="text" />
-//         <div className='flex gap-3'>
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='City' type="text" />
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='State' type="text" />
-//         </div>
-//         <div className='flex gap-3'>
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Zipcode' type="Number" />
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Country' type="text" />
-//         </div>
-//         <input className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Phone'   type="Number" />
-//       </div>
-
-//       <div className='mt-8'>
-
-//         <div className='mt-8 min-w-80'>
-//           <CartTotal/>
-//         </div>
-
-//         <div className='mt-12'>
-//             <Title text1={'PAYMENT'} text2={'METHOD'}/>
-
-//             <div onClick={()=>setMethod('stripe')} className='flex gap-3 flex-col lg:flex-row'>
-//               <div className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
-//                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' :''} `}></p>
-//                 <img className='h-5 mx-4' src={assets.stripe_logo} alt="" />
-//               </div>
-//               <div onClick={()=>setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
-//                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' :''}  `}></p>
-//                 <img className='h-5 mx-4' src={assets.razorpay_logo} alt="" />
-//               </div>
-//               <div onClick={()=>setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
-//                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' :''}  `}></p>
-//                 <p >CASH ON DELIVERY</p>
-//               </div>
-
-//             </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default PlaceOrder
-
-import  { useState } from "react";
-import Title from "../components/Title";
-import CartTotal from "../components/CartTotal";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 
 const PlaceOrder = () => {
@@ -73,14 +7,15 @@ const PlaceOrder = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
     street: "",
     city: "",
     state: "",
     zipcode: "",
-    country: "",
     phone: "",
+    email: "", // Added email field
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -91,134 +26,194 @@ const PlaceOrder = () => {
     setMethod(selectedMethod);
   };
 
+const handleCheckout = () => {
+  // Validate form data
+  const requiredFields = [
+    "firstName",
+    "lastName",
+    "street",
+    "city",
+    "state",
+    "zipcode",
+    "phone",
+    "email",
+  ];
+
+  const isFormValid = requiredFields.every(
+    (field) => formData[field].trim() !== ""
+  );
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailPattern.test(formData.email);
+
+  if (!isFormValid || !isEmailValid) {
+    alert(
+      "Please fill in all required fields and provide a valid email address"
+    );
+    return;
+  }
+
+  // Save order details to localStorage
+  const orderDetails = {
+    email: formData.email,
+    orderNumber: Math.floor(Math.random() * 1000000), // Example order number
+    totalAmount: 100, // Example total amount
+    items: [], // Populate with actual items
+  };
+  localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
+
+  // Proceed with checkout
+  console.log("Checkout with data:", { ...formData, paymentMethod: method });
+
+  // Redirect to the order confirmation page
+  navigate("/order-confirmed");
+};
   return (
-    <div className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t">
-      {/* Delivery Information */}
-      <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
-        <div className="text-xl sm:text-2xl my-3">
-          <Title text1={"DELIVERY"} text2={"INFORMATION"} />
-        </div>
-        <div className="flex gap-3">
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="First name"
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-          />
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="Last name"
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <input
-          className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-          placeholder="Email address"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-        <input
-          className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-          placeholder="Street"
-          type="text"
-          name="street"
-          value={formData.street}
-          onChange={handleInputChange}
-        />
-        <div className="flex gap-3">
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="City"
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleInputChange}
-          />
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="State"
-            type="text"
-            name="state"
-            value={formData.state}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="flex gap-3">
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="Zipcode"
-            type="number"
-            name="zipcode"
-            value={formData.zipcode}
-            onChange={handleInputChange}
-          />
-          <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-            placeholder="Country"
-            type="text"
-            name="country"
-            value={formData.country}
-            onChange={handleInputChange}
-          />
-        </div>
-        <input
-          className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
-          placeholder="Phone"
-          type="number"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-        />
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Delivery Information */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 uppercase">
+            Delivery Information
+          </h2>
 
-      {/* Order Summary and Payment Method */}
-      <div className="mt-8">
-        <div className="mt-8 min-w-80">
-          <CartTotal />
-        </div>
-
-        <div className="mt-12">
-          <Title text1={"PAYMENT"} text2={"METHOD"} />
-          <div className="flex gap-3 flex-col lg:flex-row">
-            {[
-              { id: "stripe", label: "Stripe", logo: assets.stripe_logo },
-              { id: "razorpay", label: "Razorpay", logo: assets.razorpay_logo },
-              { id: "cod", label: "Cash on Delivery" },
-            ].map((option) => (
-              <div
-                key={option.id}
-                onClick={() => handlePaymentMethodChange(option.id)}
-                className={`flex items-center gap-3 border p-2 px-3 cursor-pointer ${
-                  method === option.id ? "border-green-400" : ""
-                }`}
-              >
-                <p
-                  className={`min-w-3.5 h-3.5 border rounded-full ${
-                    method === option.id ? "bg-green-400" : ""
-                  }`}
-                ></p>
-                {option.logo && (
-                  <img
-                    className="h-5 mx-4"
-                    src={option.logo}
-                    alt={option.label}
-                  />
-                )}
-                <p>{option.label}</p>
-              </div>
-            ))}
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <input
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="First name"
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Last name"
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              required
+            />
           </div>
+
+          <div className="space-y-4">
+            <input
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Street"
+              type="text"
+              name="street"
+              value={formData.street}
+              onChange={handleInputChange}
+              required
+            />
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="City"
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="State"
+                type="text"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Zipcode"
+              type="number"
+              name="zipcode"
+              value={formData.zipcode}
+              onChange={handleInputChange}
+              required
+            />
+            </div>
+
+            <input
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Phone"
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Order Summary and Payment Method */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800 uppercase">
+              Payment Method
+            </ h2>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                // { id: "stripe", label: "Stripe", logo: assets.stripe_logo },
+                { id: "cod", label: "Cash on Delivery" },
+              ].map((option) => (
+                <div
+                  key={option.id}
+                  onClick={() => handlePaymentMethodChange(option.id)}
+                  className={`flex items-center justify-center gap-3 border p-3 rounded-md cursor-pointer transition-all duration-300 ${
+                    method === option.id
+                      ? "border-green-500 bg-green-50 shadow-md"
+                      : "border-gray-300 hover:border-blue-500"
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 border rounded-full ${
+                      method === option.id
+                        ? "bg-green-500 border-green-500"
+                        : "border-gray-300"
+                    }`}
+                  ></div>
+                  {option.logo && (
+                    <img
+                      className="h-6 object-contain"
+                      src={option.logo}
+                      alt={option.label}
+                    />
+                  )}
+                  <p className="text-sm">{option.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Checkout Button */}
+          <button
+            onClick={handleCheckout}
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors duration-300 font-semibold uppercase tracking-wider shadow-md"
+          >
+            Complete Checkout
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default PlaceOrder;
+export default PlaceOrder; 

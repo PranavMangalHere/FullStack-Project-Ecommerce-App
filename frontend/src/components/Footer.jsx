@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
@@ -94,7 +94,6 @@ const Footer = () => {
             )}
           </form>
 
-          
           <div className="flex space-x-6 mt-8">
             {[
               { Icon: FaFacebook, color: "text-blue-700" },

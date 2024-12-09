@@ -54,16 +54,28 @@ const loginUser = asyncHandler(async (req, res) => {
 
   //Generate jwt token
 
-  const token = jwt.sign(
-    { id: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  // const token = jwt.sign(
+  //   { id: user._id, email: user.email },
+  //   process.env.JWT_SECRET,
+  //   { expiresIn: "1h" }
+  // );
+
+  let token;
+  try {
+    token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    console.error("Error generating JWT:", error.message);
+    return res.status(500).json({ message: "Token generation failed" });
+  }
 
   // If login is successful, send a response (no token, just user details)
   res.status(200).json({
     message: "Login successful",
-    tokem,
+    token,
     user: {
       username:user.username,
       email: user.email,

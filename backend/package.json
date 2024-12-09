@@ -14,7 +14,8 @@
     "mongoose": "^8.8.2",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.16",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "validator": "^13.12.0"
   },
   "scripts": {
     "start": "node server.js",
